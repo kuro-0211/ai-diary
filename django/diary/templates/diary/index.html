@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 일기장</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #fdf6e3; }
+        h1 { color: #5a3e2b; }
+        .btn { background: #c0845a; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .card { background: white; border-radius: 10px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .original { color: #888; font-size: 0.9em; margin-bottom: 10px; }
+        .ai-version { color: #333; line-height: 1.8; }
+        .date { color: #aaa; font-size: 0.8em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>📔 AI 일기장</h1>
+    <a href="/create/" class="btn">+ 새 일기 쓰기</a>
+
+    {% for diary in diaries %}
+<div class="card">
+    <div class="original">📝 원문: {{ diary.original }}</div>
+    <div class="ai-version">{{ diary.ai_version }}</div>
+    <div class="date">{{ diary.created_at|date:"Y년 m월 d일 H:i" }}</div>
+    <form method="POST" action="/delete/{{ diary.pk }}/" style="margin-top:10px;">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('정말 삭제할까요?')"
+            style="background:#e06060; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.85em;">
+            🗑️ 삭제
+        </button>
+    </form>
+</div>
+{% empty %}
+<p style="color:#aaa; margin-top:30px;">아직 작성된 일기가 없어요. 첫 일기를 써보세요!</p>
+{% endfor %}
+</body>
+</html>

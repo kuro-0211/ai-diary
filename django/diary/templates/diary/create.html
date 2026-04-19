@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>일기 쓰기</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #fdf6e3; }
+        h1 { color: #5a3e2b; }
+        textarea { width: 100%; height: 150px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 1em; resize: vertical; box-sizing: border-box; }
+        .btn { background: #c0845a; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; }
+        .back { color: #888; text-decoration: none; margin-left: 10px; font-size: 0.9em; }
+
+        /* 로딩 오버레이 */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(253, 246, 227, 0.92);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #loading-overlay.show {
+            display: flex;
+        }
+        .loading-text {
+            color: #5a3e2b;
+            font-size: 1.2em;
+            margin-bottom: 24px;
+            font-weight: bold;
+        }
+        .loading-sub {
+            color: #aaa;
+            font-size: 0.9em;
+            margin-top: 12px;
+        }
+
+        /* 진행 바 */
+        .progress-bar-wrap {
+            width: 320px;
+            height: 10px;
+            background: #e8d9c5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #c0845a;
+            border-radius: 10px;
+            animation: progress 40s ease-out forwards;
+        }
+        @keyframes progress {
+            0%   { width: 0%; }
+            50%  { width: 70%; }
+            80%  { width: 88%; }
+            100% { width: 95%; }
+        }
+
+        /* 펜 아이콘 애니메이션 */
+        .pen-icon {
+            font-size: 3em;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0px) rotate(-10deg); }
+            to   { transform: translateY(-10px) rotate(10deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 로딩 오버레이 -->
+    <div id="loading-overlay">
+        <div class="pen-icon">✍️</div>
+        <div class="loading-text">AI가 일기를 쓰고 있어요...</div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="loading-sub">잠시만 기다려주세요 (30초~1분 소요)</div>
+    </div>
+
+    <h1>✏️ 오늘 있었던 일</h1>
+    <p style="color:#888;">짧게 메모하듯 입력하면 AI가 감성 일기로 바꿔줄게요.</p>
+
+    <form method="POST" id="diary-form">
+        {% csrf_token %}
+        <textarea name="original" placeholder="예) 오늘 친구랑 카페 갔다가 비 맞았음. 근데 재밌었음"></textarea>
+        <br><br>
+        <button type="submit" class="btn">🪄 AI 일기로 변환</button>
+        <a href="/" class="back">← 목록으로</a>
+    </form>
+
+    <script>
+        document.getElementById('diary-form').addEventListener('submit', function() {
+            document.getElementById('loading-overlay').classList.add('show');
+        });
+    </script>
+</body>
+</html>

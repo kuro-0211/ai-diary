@@ -1,0 +1,30 @@
+services:
+  web:
+    build: ./django
+    container_name: ai-diary-web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./django:/app
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama
+    container_name: ai-diary-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  ollama_data:
