@@ -20,37 +20,33 @@
 
 ```mermaid
 block-beta
-    columns 5
+    columns 7
 
-    space
-    block:docker["Docker Compose"]:3
-        columns 3
+    User(["사용자\n(브라우저)"]):1
+    space:1
+    block:docker["Docker Compose"]:4
+        columns 4
         block:web["web 컨테이너 :8000"]:2
-            columns 2
+            columns 1
+            URLs["URL Router"]
             Views["Views\ncreate / index / delete"]
-            Templates["Templates\ncreate.html\nindex.html"]
-            URLs["URL Router\n/ /create/ /delete/"]
+            Templates["Templates\ncreate.html / index.html"]
             Models["Models\nDiary"]
         end
-        block:ollama["ollama 컨테이너 :11434"]:1
+        block:ollama["ollama 컨테이너 :11434"]:2
             columns 1
             LLM["gemma3:4b\nLLM 모델"]
         end
     end
-    space
+    DB[("SQLite\nDB")]:1
 
-    space:5
-
-    User(["사용자\n(브라우저)"])
-    space
-    Admin(["관리자\n(Django Admin)"])
-    space
-    DB[("SQLite\nDB")]
-
-    User --> Views
-    Admin --> URLs
+    User -- "HTTP 요청" --> URLs
+    URLs --> Views
+    Views --> Templates
+    Views --> Models
     Views -- "POST /api/generate" --> LLM
-    Models --> DB
+    LLM -- "변환된 일기" --> Views
+    Models -- "Read/Write" --> DB
 ```
 
 ## 프로젝트 구조
