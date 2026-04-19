@@ -19,34 +19,31 @@
 ## 시스템 아키텍처
 
 ```mermaid
-block-beta
-    columns 7
+flowchart LR
+    A["👤 사용자\n(브라우저)"]
 
-    User(["사용자\n(브라우저)"]):1
-    space:1
-    block:docker["Docker Compose"]:4
-        columns 4
-        block:web["web 컨테이너 :8000"]:2
-            columns 1
-            URLs["URL Router"]
-            Views["Views\ncreate / index / delete"]
-            Templates["Templates\ncreate.html / index.html"]
-            Models["Models\nDiary"]
+    subgraph Docker Compose
+        subgraph web["web 컨테이너 :8000"]
+            B[URL Router]
+            C["Views\ncreate / index / delete"]
+            D["Templates\ncreate.html / index.html"]
+            E["Models\nDiary"]
         end
-        block:ollama["ollama 컨테이너 :11434"]:2
-            columns 1
-            LLM["gemma3:4b\nLLM 모델"]
+        subgraph ollama["ollama 컨테이너 :11434"]
+            F["gemma3:4b\nLLM 모델"]
         end
     end
-    DB[("SQLite\nDB")]:1
 
-    User -- "HTTP 요청" --> URLs
-    URLs --> Views
-    Views --> Templates
-    Views --> Models
-    Views -- "POST /api/generate" --> LLM
-    LLM -- "변환된 일기" --> Views
-    Models -- "Read/Write" --> DB
+    G[("SQLite DB")]
+
+    A -->|HTTP 요청| B
+    B --> C
+    C --> D
+    D -->|응답| A
+    C -->|POST /api/generate| F
+    F -->|변환된 일기| C
+    C --> E
+    E -->|Read/Write| G
 ```
 
 ## 프로젝트 구조
